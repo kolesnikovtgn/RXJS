@@ -1,6 +1,8 @@
-const userTemplate = (id, name, location, email) => `            
-    <div class="main__user-block container-row" id="${id}">
-        <img class="main__user-block-avatar" src="https://picsum.photos/72/72/?random">
+const Rx = require('rxjs/Rx');
+
+const userTemplate = (avatar, name, location, email) => `            
+    <div class="main__user-block container-row">
+        <img class="main__user-block-avatar" src="${avatar}">
         <div class="main__user-block-text container-column">
             <div class="main__user-block-text_name">${name}</div>
             <div class="main__user-block-text_location container-row">
@@ -18,9 +20,9 @@ const userTemplate = (id, name, location, email) => `
     </div>`;
 
 $(document).ready(() => {
-    $('#usersBlock').prepend(userTemplate(1, "Tom Preston-Werner", "San Francisco", "@mojombo"));
-    $('#usersBlock').prepend(userTemplate(2, "Vladimir", "San Francisco", "@mojombo"));
-    $('#usersBlock').prepend(userTemplate(3, "Tom Preston-Werner", "San Francisco", "@mojombo"));
+    // $('#usersBlock').prepend(userTemplate(1, "Tom Preston-Werner", "San Francisco", "@mojombo"));
+    // $('#usersBlock').prepend(userTemplate(2, "Vladimir", "San Francisco", "@mojombo"));
+    // $('#usersBlock').prepend(userTemplate(3, "Tom Preston-Werner", "San Francisco", "@mojombo"));
 
  $('#usersBlock').on('click', '.arrow', function(event) {
         event.preventDefault();
@@ -36,4 +38,48 @@ $(document).ready(() => {
     $(this).parent().parent().remove();
     console.log($(this).parent().parent().prop('id'));
  });
+
+const refreshButton = document.querySelector('.refresh');
+const refreshClick$ = Rx.Observable.fromEvent(refreshButton, 'click'); 
+
+const request$ = refreshClick$.startWith('startup click') 
+  .map(() => { 
+    const randomNumber = Math.floor(Math.random() * 500);
+    return `https://api.github.com/users?since=${randomNumber}`;
+  });
+
+const response$ = request$ 
+   .flatMap(requestUrl => Rx.Observable.fromPromise($.getJSON(requestUrl)));  
+
+let suggestion1Stream = response$
+  .map(function(listUsers) {
+    return listUsers[Math.floor(Math.random()*listUsers.length)];
 });
+
+let suggestion2Stream = response$
+  .map(function(listUsers) {
+    return listUsers[Math.floor(Math.random()*listUsers.length)];
+});
+
+let suggestion3Stream = response$
+  .map(function(listUsers) {
+    return listUsers[Math.floor(Math.random()*listUsers.length)];
+});
+
+suggestion1Stream.subscribe(function(res) {
+    renderBlock(res.avatar_url, res.login, res.login, res.id);
+});
+
+suggestion2Stream.subscribe(function(res) {
+    renderBlock(res.avatar_url, res.login, res.login, res.id);
+});
+
+suggestion3Stream.subscribe(function(res) {
+    renderBlock(res.avatar_url, res.login, res.login, res.id);
+});
+
+});
+
+function renderBlock(avatar, name, location, email) {
+    $('#usersBlock').prepend(userTemplate(avatar, name, location, email));
+}

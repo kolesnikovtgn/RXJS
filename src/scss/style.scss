@@ -39,12 +39,16 @@ html {
 .not-active {
     display: none;
 }
+.margin-left {
+    margin-left: -60px;
+}
 
 .main {
     max-width: 377px;
     max-height: 455px;
     margin: 100px auto;
     border-top: 3px solid $headline-theme;
+    overflow: hidden;
     &__header {
         background-color: $header-footer-theme;
         &-image {
@@ -59,19 +63,22 @@ html {
         }
     }
     &__user-block {
-        width: 100%;
+        width: 377px;
         height: 112px;
         border-bottom: 1px solid $border-theme;
         margin: 0;
         padding: 0;
         background-color: $main-theme;
         &-avatar {
+            flex: none;
             width: 72px;
             height: 72px;
             border-radius: 50%;
-            margin: 20px 0 0 16px;
+            margin: 20px 0 0 10px;
         }
         &-text {
+            flex: none;
+            width: 220px;
             margin: 25px 0 0 14px;
             &_name {
                 font-size: 2.4rem;
@@ -89,8 +96,9 @@ html {
             }
         }
         &-arrow {
+            flex: 1;
             font-size: 5em;
-            margin: 25px 0 0 15px;
+            margin: 25px 0 0 10px;
         }
         &-trash {
             font-size: 5em;

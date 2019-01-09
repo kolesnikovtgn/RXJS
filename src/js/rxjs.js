@@ -50,23 +50,32 @@ $(document).ready(() => {
   const refreshButton = $('.refresh');
   const refreshClick$ = Rx.Observable.fromEvent(refreshButton, 'click');
   const arrowClick$ = Rx.Observable.fromEventPattern(
-    // eslint-disable-next-line prefer-arrow-callback
-    function (handler) {
+    (handler) => {
       $('#usersBlock').on('click', '.arrow', handler);
     },
-    // eslint-disable-next-line prefer-arrow-callback
-    function (handler) {
+    (handler) => {
       $('#usersBlock').off('click', '.arrow', handler);
     },
   );
 
-  // eslint-disable-next-line prefer-arrow-callback
-  arrowClick$.subscribe(function (e) {
-    // $(this).find('.arrow').parent().siblings('.main__user-block-trash')
-    //   .toggle('not-active');
-    // $(this).find('.arrow').parent().siblings('img')
-    //   .toggle('.margin-left');
-    console.log(e);
+  const trashClick$ = Rx.Observable.fromEventPattern(
+    (handler) => {
+      $('#usersBlock').on('click', '.trash', handler);
+    },
+    (handler) => {
+      $('#usersBlock').off('click', '.trash', handler);
+    },
+  );
+
+  arrowClick$.subscribe((e) => {
+    $(e.target).parent().siblings('.main__user-block-trash')
+       .toggle('not-active');
+    $(e.target).parent().siblings('img')
+       .toggle('.margin-left');
+  });
+
+  trashClick$.subscribe((e) => {
+    $(e.target).parent().parent().remove();
   });
 
   const request$ = refreshClick$.startWith('startup click')

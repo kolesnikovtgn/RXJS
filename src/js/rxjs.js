@@ -1,5 +1,7 @@
 const Rx = require('rxjs/Rx');
+// eslint-disable-next-line prefer-destructuring
 const map = require('rxjs/operators/map').map;
+// eslint-disable-next-line prefer-destructuring
 const mergeMap = require('rxjs/operators/mergeMap').mergeMap;
 
 const countUsersList = 3;
@@ -22,56 +24,72 @@ const userTemplate = (avatar, name, location, email) => `
 </div> 
 </div>`;
 
+function renderBlock(avatar, name, location, email) {
+  $('#usersBlock').prepend(userTemplate(avatar, name, location, email));
+}
+
 $(document).ready(() => {
 // $('#usersBlock').prepend(userTemplate(1, "Tom Preston-Werner", "San Francisco", "@mojombo"));
 // $('#usersBlock').prepend(userTemplate(2, "Vladimir", "San Francisco", "@mojombo"));
 // $('#usersBlock').prepend(userTemplate(3, "Tom Preston-Werner", "San Francisco", "@mojombo"));
 
-$('#usersBlock').on('click', '.arrow', function(event) {
-event.preventDefault();
+  // $('#usersBlock').on('click', '.arrow', function (event) {
+  //  event.preventDefault();
+  //  $(this).parent().siblings('.main__user-block-trash').toggle('not-active');
+  //  $(this).parent().siblings('img').toggle('.margin-left');
+  // $currentId = $(this).parent().parent().prop('id');
+  // console.log($currentId);
+  // });
+  // $('#usersBlock').on('click', '.trash', function (event) {
+  //   event.preventDefault();
 
-$(this).parent().siblings('.main__user-block-trash').toggle('not-active');
-$(this).parent().siblings('img').toggle('.margin-left');
-// $currentId = $(this).parent().parent().prop('id');
-// console.log($currentId);
-});
-$('#usersBlock').on('click', '.trash', function(event) {
-event.preventDefault();
+  //   $(this).parent().parent().remove();
+  //   console.log($(this).parent().parent().prop('id'));
+  // });
 
-$(this).parent().parent().remove();
-console.log($(this).parent().parent().prop('id'));
-});
+  const refreshButton = $('.refresh');
+  const refreshClick$ = Rx.Observable.fromEvent(refreshButton, 'click');
+  const arrowClick$ = Rx.Observable.fromEventPattern(
+    // eslint-disable-next-line prefer-arrow-callback
+    function (handler) {
+      $('#usersBlock').on('click', '.arrow', handler);
+    },
+    // eslint-disable-next-line prefer-arrow-callback
+    function (handler) {
+      $('#usersBlock').off('click', '.arrow', handler);
+    },
+  );
 
-const refreshButton = $('.refresh');
-const refreshClick$ = Rx.Observable.fromEvent(refreshButton, 'click');
+  // eslint-disable-next-line prefer-arrow-callback
+  arrowClick$.subscribe(function (e) {
+    // $(this).find('.arrow').parent().siblings('.main__user-block-trash')
+    //   .toggle('not-active');
+    // $(this).find('.arrow').parent().siblings('img')
+    //   .toggle('.margin-left');
+    console.log(e);
+  });
 
-const request$ = refreshClick$.startWith('startup click')
-.map(() => {
-const randomNumber = Math.floor(Math.random() * 500);
-return `https://api.github.com/users?since=${randomNumber}`;
-});
+  const request$ = refreshClick$.startWith('startup click')
+    .map(() => {
+      const randomNumber = Math.floor(Math.random() * 500);
+      return `https://api.github.com/users?since=${randomNumber}`;
+    });
 
-const response$ = request$.pipe(
-  mergeMap(requestUrl => Rx.Observable.fromPromise($.getJSON(requestUrl)))
-);
+  const response$ = request$.pipe(
+    mergeMap(requestUrl => Rx.Observable.fromPromise($.getJSON(requestUrl))),
+    map((listUsers) => {
+      const renderUsersList = [];
+      for (let i = 0; i < countUsersList; i += 1) {
+        renderUsersList.push(listUsers[Math.floor(Math.random() * listUsers.length)]);
+      }
+      return renderUsersList;
+    }),
+  );
 
-response$.pipe(
-  map((listUsers) => {
-    let renderUsersList=[];
-    for(let i=0; i<countUsersList; i+=1) {
-      renderUsersList.push(listUsers[Math.floor(Math.random()*listUsers.length)]);
-    }
-    return renderUsersList;
-  }
-)).subscribe((res) => {
-  $('#usersBlock').empty();
-  res.forEach((el) => {
-    renderBlock(el.avatar_url, el.login, el.login, el.id);
+  response$.subscribe((res) => {
+    $('#usersBlock').empty();
+    res.forEach((el) => {
+      renderBlock(el.avatar_url, el.login, el.login, el.id);
+    });
   });
 });
-
-});
-
-function renderBlock(avatar, name, location, email) {
-  $('#usersBlock').prepend(userTemplate(avatar, name, location, email));
-}

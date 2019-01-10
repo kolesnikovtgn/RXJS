@@ -2,17 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Get users from github with rxjs</title>
+  <title>Github users</title>
   <meta name="description" content="The HTML5 Herald">
   <meta name="author" content="SitePoint">
 
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" 
+    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
   <!-- <link rel="stylesheet" href="./scss/style.scss"> -->
 </head>
 
 <body>
-
+    <main class="main">
+        <div class="main__header">
+            <img class="main__header-image" id="gitImage">
+            <div class="main__header-article">За кем следить на Github</div>
+        </div>
+        <div class="main__users container-column" id="usersBlock">
+            <!-- <div class="main__user-block container-row" id="123">
+                <img class="main__user-block-avatar" src="https://picsum.photos/72/72/?random">
+                <div class="main__user-block-text container-column">
+                    <div class="main__user-block-text_name">Tom Preston-Werner</div>
+                    <div class="main__user-block-text_location container-row">
+                        <i class="main__user-block-text_location-marker fas fa-map-marker-alt"></i>
+                        <div class="main__user-block-text_location-text">San Francisco</div>
+                    </div>
+                    <div class="main__user-block-text_mail">@mojombo</div>
+                </div>
+                <div class="main__user-block-arrow container-column">
+                    <i class="fas fa-chevron-right arrow" id="123"></i>       
+                </div>
+                <div class="main__user-block-trash not-active" id="trash"> 
+                    <i class="far fa-trash-alt"></i>
+                </div>   
+            </div>
+            <div class="main__user-block container-row">
+                    <img class="main__user-block-avatar" src="https://picsum.photos/72/72/?random">
+                    <div class="main__user-block-text container-column">
+                        <div class="main__user-block-text_name">Tom Preston-Werner</div>
+                        <div class="main__user-block-text_location container-row">
+                            <i class="main__user-block-text_location-marker fas fa-map-marker-alt"></i>
+                            <div class="main__user-block-text_location-text">San Francisco</div>
+                        </div>
+                        <div class="main__user-block-text_mail">@mojombo</div>
+                    </div>
+                    <div class="main__user-block-arrow container-column" id="arrow">
+                        <i class="fas fa-chevron-right"></i>       
+                    </div>
+                    <div class="main__user-block-trash not-active" id="trash"> 
+                        <i class="far fa-trash-alt"></i>
+                    </div>   
+            </div>
+            <div class="main__user-block container-row">
+                    <img class="main__user-block-avatar" src="https://picsum.photos/72/72/?random">
+                    <div class="main__user-block-text container-column">
+                        <div class="main__user-block-text_name">Tom Preston-Werner</div>
+                        <div class="main__user-block-text_location container-row">
+                            <i class="main__user-block-text_location-marker fas fa-map-marker-alt"></i>
+                            <div class="main__user-block-text_location-text">San Francisco</div>
+                        </div>
+                        <div class="main__user-block-text_mail">@mojombo</div>
+                    </div>
+                    <div class="main__user-block-arrow container-column" id="arrow">
+                        <i class="fas fa-chevron-right"></i>       
+                    </div>
+                    <div class="main__user-block-trash not-active" id="trash"> 
+                        <i class="far fa-trash-alt"></i>
+                    </div>   
+            </div> -->
+        </div>
+        <div class="main__footer container-row refresh">
+            <img class="main__footer-image" id="refreshImage">
+            <div class="main__footer-text">REFRESH</div>
+        </div>
+    </main>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="js/rxjs.js"></script>
+  <script src="../dist/bundle.js"></script>
 </body>
 </html>

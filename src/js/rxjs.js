@@ -3,6 +3,7 @@ const Rx = require('rxjs/Rx');
 const map = require('rxjs/operators/map').map;
 // eslint-disable-next-line prefer-destructuring
 const mergeMap = require('rxjs/operators/mergeMap').mergeMap;
+// eslint-disable-next-line prefer-destructuring
 
 const countUsersList = 3;
 const userTemplate = (avatar, name, location, email) => ` 
@@ -29,24 +30,6 @@ function renderBlock(avatar, name, location, email) {
 }
 
 $(document).ready(() => {
-// $('#usersBlock').prepend(userTemplate(1, "Tom Preston-Werner", "San Francisco", "@mojombo"));
-// $('#usersBlock').prepend(userTemplate(2, "Vladimir", "San Francisco", "@mojombo"));
-// $('#usersBlock').prepend(userTemplate(3, "Tom Preston-Werner", "San Francisco", "@mojombo"));
-
-  // $('#usersBlock').on('click', '.arrow', function (event) {
-  //  event.preventDefault();
-  //  $(this).parent().siblings('.main__user-block-trash').toggle('not-active');
-  //  $(this).parent().siblings('img').toggle('.margin-left');
-  // $currentId = $(this).parent().parent().prop('id');
-  // console.log($currentId);
-  // });
-  // $('#usersBlock').on('click', '.trash', function (event) {
-  //   event.preventDefault();
-
-  //   $(this).parent().parent().remove();
-  //   console.log($(this).parent().parent().prop('id'));
-  // });
-
   const refreshButton = $('.refresh');
   const refreshClick$ = Rx.Observable.fromEvent(refreshButton, 'click');
   const arrowClick$ = Rx.Observable.fromEventPattern(
@@ -69,13 +52,37 @@ $(document).ready(() => {
 
   arrowClick$.subscribe((e) => {
     $(e.target).parent().siblings('.main__user-block-trash')
-       .toggle('not-active');
+      .toggle('not-active');
     $(e.target).parent().siblings('img')
-       .toggle('.margin-left');
+      .toggle('.margin-left');
   });
 
   trashClick$.subscribe((e) => {
     $(e.target).parent().parent().remove();
+  });
+
+  const requestTrash$ = trashClick$.pipe(
+    map(() => {
+      const randomNumber = Math.floor(Math.random() * 500);
+      return `https://api.github.com/users?since=${randomNumber}`;
+    }),
+  );
+
+  const responseTrash$ = requestTrash$.pipe(
+    mergeMap(requestUrl => Rx.Observable.fromPromise($.getJSON(requestUrl))),
+    map((listUsers) => {
+      const renderUsersList = [];
+      for (let i = 0; i < 1; i += 1) {
+        renderUsersList.push(listUsers[Math.floor(Math.random() * listUsers.length)]);
+      }
+      return renderUsersList;
+    }),
+  );
+
+  responseTrash$.subscribe((res) => {
+    res.forEach((el) => {
+      renderBlock(el.avatar_url, el.login, el.login, el.id);
+    });
   });
 
   const request$ = refreshClick$.startWith('startup click')
